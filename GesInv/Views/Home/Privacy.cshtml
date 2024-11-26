@@ -1,0 +1,250 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --card-background: #fff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .nav-item:hover, .nav-item.active {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-item i {
+                margin-right: 10px;
+            }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-content {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .chart-container {
+            height: 300px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table th, .table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .table th {
+                background-color: var(--primary-color);
+                color: #fff;
+            }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">Gestion de Inventario</div>
+            <nav>
+                <div class="nav-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Productoes" asp-action="Index">
+                <div class="nav-item"><i class="fas fa-box"></i> Inventario</div>
+                </a>
+
+                <a class="nav-link text-dark" asp-area="" asp-controller="Proveedors" asp-action="Index">
+                <div class="nav-item"><i class="fas fa-chart-bar"></i> Proveedores</div>
+                </a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Categoriums" asp-action="Index">
+
+                <div class="nav-item"><i class="fas fa-cog"></i> Categorias</div>
+                </a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoInventarios" asp-action="Index">
+
+                    <div class="nav-item"><i class="fas fa-chart-bar"></i> Movimiento Inventarios</div>
+                </a>
+
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                    < <span>Admin</span>
+                    </a>
+                </div>
+            </header>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">Total de Productos</div>
+                    <div class="card-content">1,234</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Valor del Inventario</div>
+                    <div class="card-content">$987,654</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Productos de Bajo Stock</div>
+                    <div class="card-content">23</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Órdenes Pendientes</div>
+                    <div class="card-content">45</div>
+                </div>
+            </div>
+            <div class="grid" style="margin-top: 20px;">
+                <div class="card">
+                    <div class="card-header">Ventas Mensuales</div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Productos Más Vendidos</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Unidades Vendidas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Producto A</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>Producto B</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Producto C</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>Producto D</td>
+                                <td>4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: [1, 100, 3, 200, 5, 1000],
+                    borderColor: '#3498db',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+       
+    </script>
+</body>
+</html>
