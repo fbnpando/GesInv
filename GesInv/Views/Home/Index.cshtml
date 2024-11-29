@@ -1,0 +1,92 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Inventario</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">Gestion de Inventario </a>
+            <nav class="nav">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Productoes" asp-action="Index">Productos</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoInventario" asp-action="Index">Movimientos</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Proveedor" asp-action="Index">Proveedores</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Categorium" asp-action="Index">Categorias</a>
+
+
+                <a href="#" class="btn">Iniciar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Gestión de Inventario</h1>
+            <p>Optimiza tu negocio con nuestro sistema de gestión de inventario inteligente y eficiente.</p>
+            <a class="btn" asp-area="" asp-controller="Home" asp-action="Privacy">Dashboard</a>
+
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Análisis en Tiempo Real</h3>
+                    <p>Obtén información valiosa sobre tu inventario con nuestros análisis detallados y en tiempo real.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-barcode"></i>
+                    </div>
+                    <h3>Seguimiento Preciso</h3>
+                    <p>Mantén un control exacto de tu inventario con nuestro sistema de seguimiento avanzado.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Acceso Móvil</h3>
+                    <p>Gestiona tu inventario desde cualquier lugar con nuestra aplicación móvil intuitiva.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Animación suave para el scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animación de aparición para las características
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.feature-item').forEach((item) => {
+            item.style.opacity = 0;
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>

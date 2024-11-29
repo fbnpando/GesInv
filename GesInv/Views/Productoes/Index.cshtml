@@ -1,0 +1,100 @@
+﻿@model IEnumerable<GesInv.Models.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="container-fluid">
+    <!-- Título y botón para agregar producto -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="display-6">Gestión de Productos</h1>
+            <a class="btn btn-primary" asp-action="Create">Crear Nuevo Producto</a>
+            <!-- Botón para exportar a Excel -->
+            <a class="btn btn-success" asp-action="ExportToExcel">Exportar a Excel</a>
+        </div>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Imagen</th>
+                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
+                        <th>@Html.DisplayNameFor(model => model.Precio)</th>
+                        <th>@Html.DisplayNameFor(model => model.Stock)</th>
+                        <th>@Html.DisplayNameFor(model => model.Categoria)</th>
+                        <th>@Html.DisplayNameFor(model => model.Proveedor)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <!-- Imagen del producto -->
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Imagen))
+                                {
+                                    <img src="@item.Imagen" alt="imagens Imagen" width="100" />
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                            <td>$@Html.DisplayFor(modelItem => item.Precio)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Stock)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Categoria.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Proveedor.Nombre)</td>
+                            <td>
+                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.ProductoId">Editar</a>
+                                <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@item.ProductoId">Detalles</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.ProductoId">Eliminar</a>
+                                <a class="btn btn-sm btn-success" asp-action="ExportFactura" asp-route-id="@item.ProductoId">
+                                    Generar Factura
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Resumen del inventario -->
+    <div class="row mt-5">
+        <div class="col-md-3">
+            <div class="card text-center mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Productos</h5>
+                    <p class="card-text display-6">@Model.Count()</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Valor del Inventario</h5>
+                    <p class="card-text display-6">$@Model.Sum(p => p.Precio * p.Stock).ToString("N2")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Productos con Bajo Stock</h5>
+                    <p class="card-text display-6">@Model.Count(p => p.Stock < 10)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlace de retorno al dashboard -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a class="btn btn-outline-secondary" asp-area="" asp-controller="Home" asp-action="Privacy">Volver al Dashboard</a>
+        </div>
+    </div>
+</div>

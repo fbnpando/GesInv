@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --card-background: #fff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .nav-item:hover, .nav-item.active {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-item i {
+                margin-right: 10px;
+            }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-content {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-container {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">Gestión de Inventario</div>
+            <nav>
+                <div class="nav-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+                <a class="nav-link" asp-controller="Productoes" asp-action="Index">
+                    <div class="nav-item"><i class="fas fa-box"></i> Inventario</div>
+                </a>
+                <a class="nav-link" asp-controller="Proveedors" asp-action="Index">
+                    <div class="nav-item"><i class="fas fa-truck"></i> Proveedores</div>
+                </a>
+                <a class="nav-link" asp-controller="Categoriums" asp-action="Index">
+                    <div class="nav-item"><i class="fas fa-tags"></i> Categorías</div>
+                </a>
+                <a class="nav-link" asp-controller="MovimientoInventarios" asp-action="Index">
+                    <div class="nav-item"><i class="fas fa-exchange-alt"></i> Movimientos</div>
+                </a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <a class="nav-link" asp-controller="Home" asp-action="Index">
+                        <span>Admin</span>
+                    </a>
+                </div>
+            </header>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">Total de Productos</div>
+                    <div class="card-content">@ViewBag.TotalProductos</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Valor del Inventario</div>
+                    <div class="card-content">@String.Format("{0:C}", ViewBag.ValorInventario)</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Productos de Bajo Stock</div>
+                    <div class="card-content">@ViewBag.BajoStock</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Órdenes Pendientes</div>
+                    <div class="card-content">@ViewBag.OrdenesPendientes</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="areaChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Datos obtenidos de ViewBag
+        const ventasMensuales = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.VentasMensuales));
+        const ingresosPorCategoria = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.IngresosPorCategoria));
+        const distribucionVentas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.DistribucionVentas));
+        const comparacionVentas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ComparacionVentas));
+
+        // Gráfico de ventas mensuales
+        const salesChart = new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: ventasMensuales,
+                    borderColor: '#3498db',
+                    tension: 0.1,
+                    fill: false
+                }]
+            }
+        });
+
+        // Gráfico de ingresos por categoría
+        const barChart = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: ingresosPorCategoria.map(cat => cat.Categoria),
+                datasets: [{
+                    label: 'Ingresos ($)',
+                    data: ingresosPorCategoria.map(cat => cat.Ingresos),
+                    backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f1c40f']
+                }]
+            }
+        });
+
+        // Gráfico circular
+        const pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Producto A', 'Producto B', 'Producto C', 'Producto D'],
+                datasets: [{
+                    data: distribucionVentas,
+                    backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f']
+                }]
+            }
+        });
+
+        // Gráfico de dona
+        // Gráfico de área
+        const areaChart = new Chart(document.getElementById('areaChart'), {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Crecimiento de Ventas ($)',
+                    data: [500, 700, 800, 1200, 1500, 1800], // Ejemplo de datos
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)', // Área sombreada
+                    borderColor: '#3498db', // Color de la línea
+                    borderWidth: 2,
+                    tension: 0.3, // Curvatura de la línea
+                    fill: true // Activar el relleno del área
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Meses'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Ingresos ($)'
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

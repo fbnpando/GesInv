@@ -1,0 +1,69 @@
+﻿@model IEnumerable<GesInv.Models.MovimientoInventario>
+
+@{
+    ViewData["Title"] = "Movimientos de Inventario";
+}
+
+<div class="container-fluid">
+    
+
+    <!-- Botón para crear nuevo movimiento -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <a class="btn btn-primary" asp-action="Create">Crear Nuevo Movimiento</a>
+        </div>
+    </div>
+
+    <!-- Tabla de movimientos de inventario -->
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Cantidad)</th>
+                        <th>@Html.DisplayNameFor(model => model.FechaMovimiento)</th>
+                        <th>@Html.DisplayNameFor(model => model.TipoMovimiento)</th>
+                        <th>@Html.DisplayNameFor(model => model.Notas)</th>
+                        <th>@Html.DisplayNameFor(model => model.Producto.Nombre)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Cantidad)</td>
+                            <td>@Html.DisplayFor(modelItem => item.FechaMovimiento)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TipoMovimiento)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Notas)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Producto.Nombre)</td>
+                            <td>
+                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.MovimientoId">Editar</a>
+                                <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@item.MovimientoId">Detalles</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.MovimientoId">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <!-- Tarjeta resumen de Movimientos de Inventario -->
+                <div class="col-md-3">
+                    <div class="card text-center mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Total de Movimientos</h5>
+                            <p class="card-text">@Model.Count()</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-12">
+                                  <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Volver al Dashboard</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
